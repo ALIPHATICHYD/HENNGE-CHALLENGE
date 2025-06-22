@@ -7,7 +7,7 @@ interface CreateUserFormProps {
 export default function CreateUserForm({}: CreateUserFormProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [validationError, setValidationError] = useState<string[]>([]);
+  const [validationError, setValidationErrors] = useState<string[]>([]);
   const [apiError, setApiError] = useState<string | null>(null);
 
   const validatePassword = (pwd: string) => {
@@ -21,10 +21,46 @@ export default function CreateUserForm({}: CreateUserFormProps) {
     return errors;
   };
 
+  const handlePasswordChange = (pwd: string) => {
+    setPassword(pwd);
+    setValidationErrors(validatePassword(pwd));
+    setApiError(null); 
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setApiError(null);
+
+    const passwordErrors = validatePassword(password);
+    setValidationErrors(passwordErrors);
+    if (!username || passwordErrors.length > 0) return;
+
+    try {
+      const response = await fetch('https://api.challenge.hennge.com/password-validation-challenge-api/001/challenge-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer YOUR_TOKEN_HERE', // replace with your actual token
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        setUserWasCreated(true);
+      } else if (response.status === 400) {
+        setApiError("Sorry, the entered password is not allowed, please try a different one.");
+      } else if (response.status === 401 || response.status === 403) {
+        setApiError("Not authenticated to access this resource.");
+      } else if (response.status === 500) {
+        setApiError("Something went wrong, please try again.");
+      } else {
+        setApiError("Something went wrong, please try again.");
+      }
+    } catch (err) {
+      setApiError("Something went wrong, please try again.");
+    }
+  };
   
-
-
-
   return (
     <div style={formWrapper}>
       <form style={form}>
@@ -87,3 +123,9 @@ const formButton: CSSProperties = {
   alignSelf: 'flex-end',
   cursor: 'pointer',
 };
+
+
+function setUserWasCreated(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
