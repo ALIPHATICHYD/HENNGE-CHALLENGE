@@ -63,16 +63,43 @@ export default function CreateUserForm({}: CreateUserFormProps) {
   
   return (
     <div style={formWrapper}>
-      <form style={form}>
-        {/* make sure the username and password are submitted */}
-        {/* make sure the inputs have the accessible names of their labels */}
-        <label style={formLabel}>Username</label>
-        <input style={formInput} />
+      <form style={form} onSubmit={handleSubmit}>
+        <label style={formLabel} htmlFor="username">Username</label>
+        <input
+          id="username"
+          aria-label="Username"
+          style={formInput}
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setApiError(null);
+          }}
+        />
 
-        <label style={formLabel}>Password</label>
-        <input style={formInput} />
+        <label style={formLabel} htmlFor="password">Password</label>
+        <input
+          id="password"
+          aria-label="Password"
+          aria-invalid={validationError.length > 0}
+          style={formInput}
+          type="password"
+          value={password}
+          onChange={(e) => handlePasswordChange(e.target.value)}
+        />
 
-        <button style={formButton}>Create User</button>
+        {/* Password validation feedback */}
+        {validationError.length > 0 && (
+          <ul style={{ marginTop: '8px', color: 'red', paddingLeft: '16px' }}>
+            {validationError.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
+          </ul>
+        )}
+
+        {/* API error feedback */}
+        {apiError && <div style={{ color: 'red', marginTop: '8px' }}>{apiError}</div>}
+
+        <button style={formButton} type="submit">Create User</button>
       </form>
     </div>
   );
