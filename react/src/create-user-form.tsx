@@ -1,10 +1,30 @@
-import type { CSSProperties, Dispatch, SetStateAction, useState } from 'react';
+import { type CSSProperties, type Dispatch, type SetStateAction, useState } from 'react';
 
 interface CreateUserFormProps {
   setUserWasCreated: Dispatch<SetStateAction<boolean>>;
 }
 
-function CreateUserForm({}: CreateUserFormProps) {
+export default function CreateUserForm({}: CreateUserFormProps) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [validationError, setValidationError] = useState<string[]>([]);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const validatePassword = (pwd: string) => {
+    const errors: string[] = [];
+    if (pwd.length < 10) errors.push("Password must be at least 10 characters long");
+    if (pwd.length > 24) errors.push("Password must be at most 24 characters long");
+    if (/\s/.test(pwd)) errors.push("Password cannot contain spaces");
+    if (!/[0-9]/.test(pwd)) errors.push("Password must contain at least one number");
+    if (!/[A-Z]/.test(pwd)) errors.push("Password must contain at least one uppercase letter");
+    if (!/[a-z]/.test(pwd)) errors.push("Password must contain at least one lowercase letter");
+    return errors;
+  };
+
+  
+
+
+
   return (
     <div style={formWrapper}>
       <form style={form}>
@@ -21,8 +41,6 @@ function CreateUserForm({}: CreateUserFormProps) {
     </div>
   );
 }
-
-export { CreateUserForm };
 
 const formWrapper: CSSProperties = {
   maxWidth: '500px',
