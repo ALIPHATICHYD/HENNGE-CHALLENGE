@@ -1,5 +1,6 @@
 import { type CSSProperties, type Dispatch, type SetStateAction, useState } from 'react';
 
+const [, setUserWasCreated] = useState(false);
 interface CreateUserFormProps {
   setUserWasCreated: Dispatch<SetStateAction<boolean>>;
 }
@@ -150,9 +151,3 @@ const formButton: CSSProperties = {
   alignSelf: 'flex-end',
   cursor: 'pointer',
 };
-
-
-function setUserWasCreated(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-
